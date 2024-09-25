@@ -206,28 +206,48 @@
     var currentHeading = 0;
 
     // Initialize user location watch
-    function watchUserLocation() {
-      if (navigator.geolocation) {
+    var userMarker;
+
+function watchUserLocation() {
+    if (navigator.geolocation) {
         navigator.geolocation.watchPosition(function (position) {
-          var lat = position.coords.latitude;
-          var lng = position.coords.longitude;
-          var userLatLng = L.latLng(lat, lng);
+            var lat = position.coords.latitude;
+            var lng = position.coords.longitude;
+            var userLatLng = L.latLng(lat, lng);
+            var accuracy = position.coords.accuracy;
 
-          map.setView(userLatLng, 14);
-          userMarker.setLatLng(userLatLng);
+            // Initialize marker on the first update
+            if (!userMarker) {
+                userMarker = L.marker(userLatLng).addTo(map);
+            } else {
+                userMarker.setLatLng(userLatLng);
+            }
 
-          if (destinationLatLng && isARModeEnabled) {
-            updateAR(currentHeading);
-          }
+            // Optional: Add a circle representing accuracy
+            if (accuracy) {
+                if (userCircle) {
+                    map.removeLayer(userCircle);
+                }
+                userCircle = L.circle(userLatLng, { radius: accuracy }).addTo(map);
+            }
+
+            // Set the map view to the user's location
+            map.setView(userLatLng, 14);
+
+            // Update AR if applicable
+            if (typeof destinationLatLng !== 'undefined' && isARModeEnabled) {
+                updateAR(currentHeading);
+            }
         }, function () {
-          alert('Unable to retrieve your location.');
+            alert('Unable to retrieve your location.');
         }, {
-          enableHighAccuracy: true
+            enableHighAccuracy: true
         });
-      } else {
+    } else {
         alert('Geolocation is not supported by this browser.');
-      }
     }
+}
+  var userCircle; 
 
 
     const customLocations = {
