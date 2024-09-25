@@ -198,14 +198,14 @@ footer {
 }
 
 /* Animation Container */
-.animation-container {
+/* .animation-container {
     position: absolute;
     bottom: 0;
     right: 0;
     width: 100px;
     height: 100px;
     background-color: red;
-}
+} */
 
 /* Responsive Styling */
 @media (max-width: 768px) {
